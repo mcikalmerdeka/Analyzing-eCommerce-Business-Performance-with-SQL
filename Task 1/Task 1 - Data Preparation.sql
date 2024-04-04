@@ -210,6 +210,7 @@ CSV HEADER;
 
 -- ========== D. Extra Pre-Processing For Geolocations Table ==========
 
+-- Clean Original Geolocation
 CREATE TABLE geolocations_cleaned_city_state AS
 SELECT geolocation_zip_code_prefix, geolocation_lat, geolocation_lng, 
 REPLACE(REPLACE(REPLACE(
@@ -222,81 +223,83 @@ TRANSLATE(TRANSLATE(TRANSLATE(TRANSLATE(
 ) AS geolocation_city, geolocation_state
 from geolocations_original;
 
-CREATE TABLE geolocations AS
+UPDATE geolocations_cleaned_city_state
+SET geolocation_city = 'sao paulo'
+where geolocation_city = 'saopaulo';
+
+-- Create New Table of Geolocation to Fix Altering Foreign Key Issue
+CREATE TABLE geolocations_final AS
 WITH geolocations_cleaned_filtered AS (
-	SELECT geolocation_zip_code_prefix,
-	geolocation_lat,
-	geolocation_lng,
-	geolocation_city,
-	geolocation_state FROM (
-		SELECT *,
-			ROW_NUMBER() OVER (
-				PARTITION BY geolocation_zip_code_prefix
-			) AS ROW_NUMBER
-		FROM geolocations_cleaned_city_state
-	) TEMP
-	WHERE ROW_NUMBER = 1
+    SELECT 
+        geolocation_zip_code_prefix,
+        geolocation_lat,
+        geolocation_lng,
+        geolocation_city,
+        geolocation_state 
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY geolocation_zip_code_prefix) AS ROW_NUMBER
+        FROM geolocations_cleaned_city_state
+    ) AS TEMP
+    WHERE ROW_NUMBER = 1
 ),
 customer_geolocations AS (
-	SELECT customer_zip_code_prefix,
-	geolocation_lat,
-	geolocation_lng,
-	customer_city,
-	customer_state
-	FROM (
-		SELECT *,
-			ROW_NUMBER() OVER (
-				PARTITION BY customer_zip_code_prefix
-			) AS ROW_NUMBER
-		FROM (
-			SELECT customer_zip_code_prefix,
-				geolocation_lat, 
-				geolocation_lng,
-				customer_city,
-				customer_state
-			FROM customers
-			LEFT JOIN geolocations_original 
-			ON customer_city = geolocation_city
-			AND customer_state = geolocation_state
-			WHERE customer_zip_code_prefix NOT IN (
-				SELECT geolocation_zip_code_prefix
-				FROM geolocations_original 
-			)
-		) geo
-	) TEMP
-	WHERE ROW_NUMBER = 1
+    SELECT
+        customer_zip_code_prefix,
+        geolocation_lat,
+        geolocation_lng,
+        customer_city,
+        customer_state
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY customer_zip_code_prefix) AS ROW_NUMBER
+        FROM (
+            SELECT 
+                customer_zip_code_prefix,
+                geolocation_lat, 
+                geolocation_lng,
+                customer_city,
+                customer_state
+            FROM customers
+            LEFT JOIN geolocations_cleaned_city_state 
+                ON customer_city = geolocation_city
+                AND customer_state = geolocation_state
+            WHERE customer_zip_code_prefix NOT IN (
+                SELECT geolocation_zip_code_prefix
+                FROM geolocations_cleaned_city_state 
+            )
+        ) AS geo_1
+    ) AS TEMP
+    WHERE ROW_NUMBER = 1
 ),
 seller_geolocations AS (
-	SELECT seller_zip_code_prefix,
-		geolocation_lat, 
-		geolocation_lng,
-		seller_city,
-		seller_state 
-	FROM (
-		SELECT *,
-			ROW_NUMBER() OVER (
-				PARTITION BY seller_zip_code_prefix
-			) AS ROW_NUMBER
-		FROM (
-			SELECT seller_zip_code_prefix,
-				geolocation_lat, 
-				geolocation_lng,
-				seller_city,
-				seller_state
-			FROM sellers cd 
-			LEFT JOIN geolocations_original 
-			ON seller_city = geolocation_city
-			AND seller_state = geolocation_state
-			WHERE seller_zip_code_prefix NOT IN (
-				SELECT geolocation_zip_code_prefix
-				FROM geolocations_original 
-				UNION
-				SELECT customer_zip_code_prefix
-				FROM seller_geolocations  
-			)
-		) geo
-	) TEMP
-	WHERE ROW_NUMBER = 1
+    SELECT 
+        seller_zip_code_prefix,
+        geolocation_lat, 
+        geolocation_lng,
+        seller_city,
+        seller_state 
+    FROM (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY seller_zip_code_prefix) AS ROW_NUMBER
+        FROM (
+            SELECT 
+                seller_zip_code_prefix,
+                geolocation_lat, 
+                geolocation_lng,
+                seller_city,
+                seller_state
+            FROM sellers 
+            LEFT JOIN geolocations_cleaned_city_state 
+                ON seller_city = geolocation_city
+                AND seller_state = geolocation_state
+            WHERE seller_zip_code_prefix NOT IN (
+                SELECT geolocation_zip_code_prefix
+                FROM geolocations_cleaned_city_state 
+            )
+        ) AS geo_2
+    ) AS TEMP
+    WHERE ROW_NUMBER = 1
 )
 SELECT * 
 FROM geolocations_cleaned_filtered
@@ -307,7 +310,8 @@ UNION
 SELECT * 
 FROM seller_geolocations;
 
-ALTER TABLE geolocations ADD CONSTRAINT geolocation_pk PRIMARY KEY (geolocation_zip_code_prefix);
+ALTER TABLE geolocations_cleaned_city_state ADD CONSTRAINT geolocation_pk PRIMARY KEY (geolocation_zip_code_prefix);
+
 
 -- ========== E. Adding Foreign Key ==========
 
@@ -341,12 +345,23 @@ ADD CONSTRAINT order_items_fk_sellers
 FOREIGN KEY (seller_id) REFERENCES sellers(seller_id)
 ON DELETE CASCADE ON UPDATE CASCADE;
 
+/*
+	There seem to be a problem when adding FK to customers and sellers table
+	on the zip_code_prefix column, the problem is that the original geolocations
+	does not have unique constraint in that column.
+	
+	We will fix that problem in section D, by UNION the filtered tables.
+	
+	Note : I have already tried with using ALTER TABLE ADD CONSTRAINT geolocation_pk PRIMARY KEY (geolocation_zip_code_prefix);
+	but te issue does not seem to be fixed.
+*/
+
 ALTER TABLE customers
 ADD CONSTRAINT customers_fk
-FOREIGN KEY (customer_zip_code_prefix) REFERENCES geolocations(geolocation_zip_code_prefix)
+FOREIGN KEY (customer_zip_code_prefix) REFERENCES geolocations_final(geolocation_zip_code_prefix)
 ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE sellers
 ADD CONSTRAINT sellers_fk
-FOREIGN KEY (seller_zip_code_prefix) REFERENCES geolocations(geolocation_zip_code_prefix)
+FOREIGN KEY (seller_zip_code_prefix) REFERENCES geolocations_final(geolocation_zip_code_prefix)
 ON DELETE CASCADE ON UPDATE CASCADE;
