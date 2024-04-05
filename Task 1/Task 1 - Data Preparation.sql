@@ -2,7 +2,8 @@
 
 -- ========== A. Create Database ==========
 
-CREATE DATABASE ecommerce_rakamin_miniproject;
+CREATE DATABASE
+ecommerce_rakamin_miniproject;
 
 -- ========== B. Create Tables ==========
 
@@ -310,7 +311,12 @@ UNION
 SELECT * 
 FROM seller_geolocations;
 
-ALTER TABLE geolocations_cleaned_city_state ADD CONSTRAINT geolocation_pk PRIMARY KEY (geolocation_zip_code_prefix);
+-- Cleaning The Remaining Unfiltered (geolocation_zip_code_prefix = 07412 & 71551)
+DELETE FROM geolocations_final WHERE geolocation_lat = -23.3966354454671 AND geolocation_lng = -46.322352450458766; 
+DELETE FROM geolocations_final WHERE geolocation_lat = -16.02163534898593 AND geolocation_lng = -48.020594057098485;
+
+-- Assign Primary Key to geolocations_final Table
+ALTER TABLE geolocations_final ADD CONSTRAINT geolocation_pk PRIMARY KEY (geolocation_zip_code_prefix);
 
 
 -- ========== E. Adding Foreign Key ==========
