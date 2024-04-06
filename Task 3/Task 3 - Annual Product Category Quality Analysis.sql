@@ -102,12 +102,12 @@ WHERE ranking = 1;
 
 SELECT
 	tpr.year, 
-	tpr.product_category_name AS top_product_category_revenue_name, 
-	tpr.total_revenue AS top_product_category_revenue, 
 	try.total_revenue AS total_revenue_yearly,
+	tpr.product_category_name AS top_product_category_revenue_name, 
+	tpr.total_revenue AS top_product_category_revenue,
+	tcy.total_cancel_order AS total_cancel_orders_yearly,
 	tpc.product_category_name AS top_product_category_cancel_name,
-	tpc.total_cancel_order AS top_product_category_cancel,
-	tcy.total_cancel_order AS total_cancel_orders_yearly
+	tpc.total_cancel_order AS top_product_category_cancel
 	
 FROM top_product_category_revenue_yearly tpr
 JOIN total_revenue_yearly try 
