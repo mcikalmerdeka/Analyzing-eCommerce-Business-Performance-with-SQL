@@ -20,6 +20,26 @@ FROM (
 GROUP BY 1
 ORDER BY 1;
 
+-- (Additional) Same result but using CTE instead of subquery
+WITH monthly AS (
+	SELECT
+		EXTRACT(year FROM o.order_purchase_timestamp) AS year,
+		EXTRACT(month FROM o.order_purchase_timestamp) AS month,
+		COUNT(DISTINCT c.customer_unique_id) AS customer_total
+	FROM orders o
+	JOIN customers c
+	ON o.customer_id = c.customer_id
+	GROUP BY 1,2
+)
+
+SELECT
+	year,
+	FLOOR(AVG(customer_total)) AS avg_monthly_active_user
+FROM monthly
+GROUP BY 1
+ORDER BY 1;
+
+
 -- ========== B. Display the number of new customers for each year ==========
 
 -- Hint: New customers are those who place their first order.
