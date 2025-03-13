@@ -1,6 +1,10 @@
 # Analyzing eCommerce Business Performance with SQL
 
+![Project Header](https://raw.githubusercontent.com/mcikalmerdeka/Analyzing-eCommerce-Business-Performance-with-SQL/refs/heads/main/Assets/Project%20Header.jpg)
+
 **This project originally came from an assignment after a data science bootcamp program that I attended. Which is why you can see there are several folders of tasks that contain instructions about business questions that must be answered based on data and my presentation file for each of them.**
+
+## Project Description 
 
 This dataset was generously provided by Olist, the largest department store in Brazilian marketplaces. The dataset has information of 100k orders from 2016 to 2018 made at multiple marketplaces in Brazil. Its features allows viewing an order from multiple dimensions: from order status, price, payment and freight performance to customer location, product attributes and finally reviews written by customers. We also released a geolocation dataset that relates Brazilian zip codes to lat/lng coordinates.
 
