@@ -6,7 +6,11 @@
 
 ## Project Description 
 
-This dataset was generously provided by Olist, the largest department store in Brazilian marketplaces. The dataset has information of 100k orders from 2016 to 2018 made at multiple marketplaces in Brazil. Its features allows viewing an order from multiple dimensions: from order status, price, payment and freight performance to customer location, product attributes and finally reviews written by customers. We also released a geolocation dataset that relates Brazilian zip codes to lat/lng coordinates.
+- In any company, measuring business performance is crucial for tracking, monitoring, and evaluating the success or failure of various business processes. Effective performance measurement helps businesses identify areas for improvement, make data-driven decisions, and allocate resources efficiently. For eCommerce companies specifically, understanding metrics related to customer behavior, product performance, and payment trends is essential to stay competitive in the rapidly evolving digital marketplace. By analyzing these key performance indicators (KPIs), businesses can adapt their strategies, enhance customer experience, and ultimately drive growth and profitability.
+
+- Therefore, this project will analyze the business performance of an eCommerce company, taking into account several business metrics such as customer growth, product quality, and payment methods.
+
+- This dataset was generously provided by Olist, the largest department store in Brazilian marketplaces. The dataset has information of 100k orders from 2016 to 2018 made at multiple marketplaces in Brazil. Its features allows viewing an order from multiple dimensions: from order status, price, payment and freight performance to customer location, product attributes and finally reviews written by customers. We also released a geolocation dataset that relates Brazilian zip codes to lat/lng coordinates.
 
 Here is the initial walkthrough of the task:
 
