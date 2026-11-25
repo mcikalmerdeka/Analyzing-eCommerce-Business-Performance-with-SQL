@@ -1,0 +1,11 @@
+__pycache__/
+.venv/
+skills-lock.json
+
+# AXIOM
+.agents/
+.env.axiom
+opencode.json.venv/
+
+# Superpowers
+docs/superpowers/
