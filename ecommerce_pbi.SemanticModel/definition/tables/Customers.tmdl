@@ -1,0 +1,71 @@
+table Customers
+	column 'Customer Unique ID'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+	column 'State Code'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: State
+
+	column City
+		dataType: string
+		summarizeBy: none
+		sourceColumn: City
+
+	column 'Zip Code Prefix'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Zip
+
+	column 'First Purchase Date'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		isHidden
+		summarizeBy: none
+		sourceColumn: FirstPurchase
+
+	column 'First Purchase Year' = YEAR([First Purchase Date])
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Lifetime Orders'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: LifetimeOrders
+
+	column 'Customer Type' = IF([Lifetime Orders] > 1, "Repeat", "One-time")
+		dataType: string
+		isHidden
+		summarizeBy: none
+
+	column 'Order Frequency Sort' = MIN([Lifetime Orders], 5)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Order Frequency' = SWITCH(TRUE(), [Lifetime Orders] >= 5, "5+ orders", [Lifetime Orders] = 1, "1 order", [Lifetime Orders] & " orders")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Order Frequency Sort'
+
+	partition Customers = m
+		mode: import
+		source =
+				let
+				    OrderStats = Table.Group(Orders, {"customer_unique_id"}, {{"FirstPurchase", each List.Min([order_purchase_timestamp]), type datetime}, {"LifetimeOrders", each Table.RowCount(_), Int64.Type}}),
+				    Profiles = Table.Group(customers_dataset, {"customer_unique_id"}, {{"State", each List.First([customer_state]), type text}, {"City", each List.First([customer_city]), type text}, {"Zip", each List.First([customer_zip_code_prefix]), Int64.Type}}),
+				    Merged = Table.NestedJoin(OrderStats, {"customer_unique_id"}, Profiles, {"customer_unique_id"}, "profile", JoinKind.LeftOuter),
+				    Expanded = Table.ExpandTableColumn(Merged, "profile", {"State", "City", "Zip"}, {"State", "City", "Zip"})
+				in
+				    Expanded

@@ -1,0 +1,53 @@
+table 'Product Category'
+	column 'Category Key'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Category Key
+
+	column 'Category Sort'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Category Sort
+
+	column Category
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Category Sort'
+		sourceColumn: Category
+
+	partition 'Product Category' = m
+		mode: import
+		source =
+				let
+				    Source = Products,
+				    Distinct = Table.Distinct(Table.SelectColumns(Source, {"product_category_name"})),
+				    Renamed = Table.RenameColumns(Distinct, {{"product_category_name", "Category Key"}}),
+				    CategoryMap = [
+				        health_beauty = "Health & Beauty",
+				        watches_gifts = "Watches & Gifts",
+				        bed_bath_table = "Bed, Bath & Table",
+				        sports_leisure = "Sports & Leisure",
+				        computers_accessories = "Computers & Accessories",
+				        housewares = "Housewares",
+				        furniture_decor = "Furniture & Decor",
+				        auto = "Auto",
+				        baby = "Baby",
+				        cool_stuff = "Cool Stuff",
+				        garden_tools = "Garden Tools",
+				        telephony = "Telephony",
+				        perfumery = "Perfumery",
+				        toys = "Toys",
+				        stationery = "Stationery",
+				        fashion_bags_accessories = "Fashion Bags & Accessories",
+				        pet_shop = "Pet Shop",
+				        furniture_living_room = "Furniture: Living Room",
+				        furniture_bedroom = "Furniture: Bedroom",
+				        home_appliances = "Home Appliances",
+				        unknown = "Unknown"
+				    ],
+				    AddedCategory = Table.AddColumn(Renamed, "Category", each Record.FieldOrDefault(CategoryMap, [Category Key], Text.Proper(Text.Replace([Category Key], "_", " "))), type text),
+				    AddedSort = Table.AddColumn(AddedCategory, "Category Sort", each [Category], type text)
+				in
+				    AddedSort

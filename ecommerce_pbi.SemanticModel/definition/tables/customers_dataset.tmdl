@@ -1,0 +1,43 @@
+table customers_dataset
+	isHidden
+
+	column customer_id
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	column customer_unique_id
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+	column customer_zip_code_prefix
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_zip_code_prefix
+
+	column customer_city
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_city
+
+	column customer_state
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: customer_state
+
+	partition customers_dataset = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\Personal Projects\Analyzing eCommerce Business Performance with SQL\data\customers_dataset.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"customer_id", type text}, {"customer_unique_id", type text}, {"customer_zip_code_prefix", Int64.Type}, {"customer_city", type text}, {"customer_state", type text}}, "en-US")
+				in
+				    #"Changed Type"

@@ -1,0 +1,67 @@
+table Geography
+	column 'State Code'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [State Code]
+
+	column State
+		dataType: string
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [State]
+
+	column Region
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Region Sort'
+		isNameInferred
+		sourceColumn: [Region]
+
+	column 'Region Sort'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Region Sort]
+
+	partition Geography = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "State Code", STRING,
+				    "State", STRING,
+				    "Region", STRING,
+				    "Region Sort", INTEGER,
+				    {
+				        {"AC", "Acre", "North", 1},
+				        {"AP", "Amapá", "North", 1},
+				        {"AM", "Amazonas", "North", 1},
+				        {"PA", "Pará", "North", 1},
+				        {"RO", "Rondônia", "North", 1},
+				        {"RR", "Roraima", "North", 1},
+				        {"TO", "Tocantins", "North", 1},
+				        {"AL", "Alagoas", "Northeast", 2},
+				        {"BA", "Bahia", "Northeast", 2},
+				        {"CE", "Ceará", "Northeast", 2},
+				        {"MA", "Maranhão", "Northeast", 2},
+				        {"PB", "Paraíba", "Northeast", 2},
+				        {"PE", "Pernambuco", "Northeast", 2},
+				        {"PI", "Piauí", "Northeast", 2},
+				        {"RN", "Rio Grande do Norte", "Northeast", 2},
+				        {"SE", "Sergipe", "Northeast", 2},
+				        {"DF", "Distrito Federal", "Center-West", 3},
+				        {"GO", "Goiás", "Center-West", 3},
+				        {"MT", "Mato Grosso", "Center-West", 3},
+				        {"MS", "Mato Grosso do Sul", "Center-West", 3},
+				        {"ES", "Espírito Santo", "Southeast", 4},
+				        {"MG", "Minas Gerais", "Southeast", 4},
+				        {"RJ", "Rio de Janeiro", "Southeast", 4},
+				        {"SP", "São Paulo", "Southeast", 4},
+				        {"PR", "Paraná", "South", 5},
+				        {"RS", "Rio Grande do Sul", "South", 5},
+				        {"SC", "Santa Catarina", "South", 5}
+				    }
+				)

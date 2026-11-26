@@ -1,0 +1,29 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["customers_dataset","Orders","Order Items","Payments","Reviews","Products","Sellers","Date","Customers","Product Category","Geography","_Measures"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table customers_dataset
+ref table Orders
+ref table 'Order Items'
+ref table Payments
+ref table Reviews
+ref table Products
+ref table Sellers
+ref table 'Date'
+ref table Customers
+ref table 'Product Category'
+ref table Geography
+ref table _Measures
+
+ref cultureInfo en-US

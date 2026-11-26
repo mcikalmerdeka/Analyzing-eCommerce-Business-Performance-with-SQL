@@ -1,0 +1,66 @@
+table Payments
+
+	column 'Order ID'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column 'Payment Sequential'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: payment_sequential
+
+	column 'Payment Type Raw'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: payment_type
+
+	column Installments
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: payment_installments
+
+	column 'Payment Type Sort' = SWITCH([Payment Type Raw], "credit_card", 1, "boleto", 2, "voucher", 3, "debit_card", 4, 5)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Payment Type' = SWITCH([Payment Type Raw], "credit_card", "Credit card", "boleto", "Boleto", "voucher", "Voucher", "debit_card", "Debit card", "not_defined", "Not defined", "Other")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Payment Type Sort'
+
+	column 'Installment Bucket Sort' = SWITCH(TRUE(), [Installments] <= 1, 1, [Installments] <= 3, 2, [Installments] <= 6, 3, [Installments] <= 12, 4, 5)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Installment Bucket' = SWITCH(TRUE(), [Installments] <= 1, "1 installment", [Installments] <= 3, "2-3 installments", [Installments] <= 6, "4-6 installments", [Installments] <= 12, "7-12 installments", "13+ installments")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Installment Bucket Sort'
+
+	column 'Payment Value'
+		dataType: double
+		formatString: R$ #,##0.00
+		summarizeBy: sum
+		sourceColumn: payment_value
+
+	partition Payments = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\Personal Projects\Analyzing eCommerce Business Performance with SQL\data\order_payments_dataset.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"order_id", type text}, {"payment_sequential", Int64.Type}, {"payment_type", type text}, {"payment_installments", Int64.Type}, {"payment_value", type number}}, "en-US"),
+				    #"Merged Orders" = Table.NestedJoin(#"Changed Type", {"order_id"}, Orders, {"order_id"}, "orders", JoinKind.Inner),
+				    #"Removed Orders" = Table.RemoveColumns(#"Merged Orders", {"orders"})
+				in
+				    #"Removed Orders"

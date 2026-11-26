@@ -1,0 +1,62 @@
+table 'Order Items'
+
+	column 'Order ID'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column 'Order Item ID'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: order_item_id
+
+	column 'Product ID'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: product_id
+
+	column 'Seller ID'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: seller_id
+
+	column 'Shipping Limit Date'
+		dataType: dateTime
+		formatString: General Date
+		isHidden
+		summarizeBy: none
+		sourceColumn: shipping_limit_date
+
+	column Price
+		dataType: double
+		formatString: R$ #,##0.00
+		summarizeBy: sum
+		sourceColumn: price
+
+	column 'Freight Value'
+		dataType: double
+		formatString: R$ #,##0.00
+		summarizeBy: sum
+		sourceColumn: freight_value
+
+	column 'Gross Value' = [Price] + [Freight Value]
+		dataType: double
+		formatString: R$ #,##0.00
+		summarizeBy: sum
+
+	partition OrderItems = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("E:\Personal Projects\Analyzing eCommerce Business Performance with SQL\data\order_items_dataset.csv"),[Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"order_id", type text}, {"order_item_id", Int64.Type}, {"product_id", type text}, {"seller_id", type text}, {"shipping_limit_date", type datetime}, {"price", type number}, {"freight_value", type number}}, "en-US"),
+				    #"Merged Orders" = Table.NestedJoin(#"Changed Type", {"order_id"}, Orders, {"order_id"}, "orders", JoinKind.Inner),
+				    #"Removed Orders" = Table.RemoveColumns(#"Merged Orders", {"orders"})
+				in
+				    #"Removed Orders"

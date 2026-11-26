@@ -2,6 +2,9 @@ __pycache__/
 .venv/
 skills-lock.json
 
+# Power BI local state
+**/.pbi/
+
 # AXIOM
 .agents/
 .env.axiom
@@ -9,3 +12,6 @@ opencode.json.venv/
 
 # Superpowers
 docs/superpowers/
+
+# Others
+other/

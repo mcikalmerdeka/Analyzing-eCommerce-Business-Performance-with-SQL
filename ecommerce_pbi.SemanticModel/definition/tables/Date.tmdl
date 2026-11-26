@@ -1,0 +1,82 @@
+table Date
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Year = YEAR([Date])
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+
+	column 'Year Label' = SWITCH(YEAR([Date]), 2016, "2016 (partial)", 2018, "2018 YTD", FORMAT(YEAR([Date]), "0"))
+		dataType: string
+		summarizeBy: none
+		sortByColumn: Year
+
+	column 'Quarter Number' = QUARTER([Date])
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column Quarter = "Q" & QUARTER([Date])
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Quarter Number'
+
+	column 'Month Number' = MONTH([Date])
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column Month = FORMAT([Date], "MMMM")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Month Number'
+
+	column 'Month Short' = FORMAT([Date], "MMM")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Month Number'
+
+	column 'Year Month Sort' = YEAR([Date]) * 100 + MONTH([Date])
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column 'Year Month' = FORMAT([Date], "MMM YYYY")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Year Month Sort'
+
+	column 'Weekday Sort' = WEEKDAY([Date], 2)
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	column Weekday = FORMAT([Date], "dddd")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: 'Weekday Sort'
+
+	column 'Is Weekend' = WEEKDAY([Date], 2) >= 6
+		dataType: boolean
+		summarizeBy: none
+
+	column 'Day of Month' = DAY([Date])
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+
+	partition Date = calculated
+		mode: import
+		source = CALENDAR(DATE(2016, 1, 1), DATE(2018, 12, 31))

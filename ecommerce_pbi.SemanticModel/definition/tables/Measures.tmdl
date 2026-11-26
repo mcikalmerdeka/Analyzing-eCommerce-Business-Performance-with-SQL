@@ -1,0 +1,252 @@
+table _Measures
+	column Placeholder
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Placeholder
+
+	measure 'Revenue' = CALCULATE(SUM('Order Items'[Gross Value]), Orders[Order Status] = "delivered")
+		formatString: R$ #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Product Revenue' = CALCULATE(SUM('Order Items'[Price]), Orders[Order Status] = "delivered")
+		formatString: R$ #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Freight Revenue' = CALCULATE(SUM('Order Items'[Freight Value]), Orders[Order Status] = "delivered")
+		formatString: R$ #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Orders' = DISTINCTCOUNT(Orders[Order ID])
+		formatString: #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Delivered Orders' = CALCULATE(DISTINCTCOUNT(Orders[Order ID]), Orders[Order Status] = "delivered")
+		formatString: #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'AOV' = DIVIDE([Revenue], [Delivered Orders])
+		formatString: R$ #,##0.00
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Items Sold' = CALCULATE(COUNTROWS('Order Items'), Orders[Order Status] = "delivered")
+		formatString: #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Avg Items per Order' = DIVIDE([Items Sold], [Delivered Orders])
+		formatString: 0.00
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Canceled Orders' = CALCULATE(DISTINCTCOUNT(Orders[Order ID]), Orders[Order Status] = "canceled")
+		formatString: #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Cancel Rate' = DIVIDE([Canceled Orders], [Orders])
+		formatString: 0.0%
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Revenue LY' = CALCULATE([Revenue], SAMEPERIODLASTYEAR('Date'[Date]))
+		formatString: R$ #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Revenue YoY %' = DIVIDE([Revenue] - [Revenue LY], [Revenue LY])
+		formatString: 0.0%
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Delivered Orders LY' = CALCULATE([Delivered Orders], SAMEPERIODLASTYEAR('Date'[Date]))
+		formatString: #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Orders YoY %' = DIVIDE([Delivered Orders] - [Delivered Orders LY], [Delivered Orders LY])
+		formatString: 0.0%
+		displayFolder: 1 Revenue & Orders
+
+	measure 'AOV LY' = DIVIDE([Revenue LY], [Delivered Orders LY])
+		formatString: R$ #,##0.00
+		displayFolder: 1 Revenue & Orders
+
+	measure 'AOV YoY %' = DIVIDE([AOV] - [AOV LY], [AOV LY])
+		formatString: 0.0%
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Revenue per Customer' = DIVIDE([Revenue], [Customers])
+		formatString: R$ #,##0.00
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Revenue 3M Avg' =
+			VAR CurrentDate = MAX('Date'[Date])
+			VAR Period = DATESINPERIOD('Date'[Date], CurrentDate, -3, MONTH)
+			VAR Months = CALCULATETABLE(VALUES('Date'[Year Month]), REMOVEFILTERS('Date'), Period)
+			RETURN DIVIDE(CALCULATE([Revenue], REMOVEFILTERS('Date'), Period), COUNTROWS(Months))
+		formatString: R$ #,##0
+		displayFolder: 1 Revenue & Orders
+
+	measure 'Customers' = DISTINCTCOUNT(Orders[Customer Unique ID])
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'New Customers' =
+			CALCULATE(
+			    COUNTROWS(Customers),
+			    FILTER(
+			        Customers,
+			        Customers[First Purchase Date] >= MIN('Date'[Date]) &&
+			        Customers[First Purchase Date] <= MAX('Date'[Date])
+			    )
+			)
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Returning Customers' =
+			CALCULATE(
+			    DISTINCTCOUNT(Orders[Customer Unique ID]),
+			    FILTER(Customers, Customers[First Purchase Date] < MIN('Date'[Date]))
+			)
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Customer Retention %' = DIVIDE([Returning Customers], [Customers])
+		formatString: 0.0%
+		displayFolder: 2 Customers
+
+	measure 'Lifetime Repeat Customers' = CALCULATE(COUNTROWS(Customers), Customers[Lifetime Orders] > 1)
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Lifetime Repeat Rate' = DIVIDE([Lifetime Repeat Customers], COUNTROWS(Customers))
+		formatString: 0.0%
+		displayFolder: 2 Customers
+
+	measure 'Avg Orders per Customer' = DIVIDE([Orders], [Customers])
+		formatString: 0.00
+		displayFolder: 2 Customers
+
+	measure 'MAU' = AVERAGEX(FILTER(VALUES('Date'[Year Month]), [Customers] > 0), [Customers])
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Customer Count' = COUNTROWS(Customers)
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Customers LY' = CALCULATE([Customers], SAMEPERIODLASTYEAR('Date'[Date]))
+		formatString: #,##0
+		displayFolder: 2 Customers
+
+	measure 'Customers YoY %' = DIVIDE([Customers] - [Customers LY], [Customers LY])
+		formatString: 0.0%
+		displayFolder: 2 Customers
+
+	measure 'Top Category' =
+			VAR T = TOPN(1, VALUES('Product Category'[Category]), [Revenue], DESC)
+			RETURN CONCATENATEX(T, 'Product Category'[Category], ", ")
+		displayFolder: 3 Products & Reviews
+
+	measure 'Top 3 Category Share' =
+			VAR T = TOPN(3, VALUES('Product Category'[Category]), [Revenue], DESC)
+			RETURN DIVIDE(SUMX(T, [Revenue]), [Revenue])
+		formatString: 0.0%
+		displayFolder: 3 Products & Reviews
+
+	measure 'Revenue Share' = DIVIDE([Revenue], CALCULATE([Revenue], ALLSELECTED('Product Category')))
+		formatString: 0.0%
+		displayFolder: 3 Products & Reviews
+
+	measure 'Avg Review Score' = AVERAGE(Reviews[Review Score])
+		formatString: 0.00
+		displayFolder: 3 Products & Reviews
+
+	measure 'Review Count' = COUNTROWS(Reviews)
+		formatString: #,##0
+		displayFolder: 3 Products & Reviews
+
+	measure 'Positive Review %' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Sentiment] = "Positive"), [Review Count])
+		formatString: 0.0%
+		displayFolder: 3 Products & Reviews
+
+	measure 'Negative Review %' = DIVIDE(CALCULATE(COUNTROWS(Reviews), Reviews[Sentiment] = "Negative"), [Review Count])
+		formatString: 0.0%
+		displayFolder: 3 Products & Reviews
+
+	measure 'Payment Value' = SUM(Payments[Payment Value])
+		formatString: R$ #,##0
+		displayFolder: 4 Payments
+
+	measure 'Payment Count' = COUNTROWS(Payments)
+		formatString: #,##0
+		displayFolder: 4 Payments
+
+	measure 'Payment Orders' = DISTINCTCOUNT(Payments[Order ID])
+		formatString: #,##0
+		displayFolder: 4 Payments
+
+	measure 'Payment Value Share' = DIVIDE([Payment Value], CALCULATE([Payment Value], REMOVEFILTERS(Payments), VALUES('Date'[Date])))
+		formatString: 0.0%
+		displayFolder: 4 Payments
+
+	measure 'Avg Payment Value' = DIVIDE([Payment Value], [Payment Count])
+		formatString: R$ #,##0.00
+		displayFolder: 4 Payments
+
+	measure 'Avg Installments' = CALCULATE(AVERAGE(Payments[Installments]), Payments[Payment Type] = "Credit card")
+		formatString: 0.00
+		displayFolder: 4 Payments
+
+	measure 'Credit Card Value Share' = DIVIDE(CALCULATE([Payment Value], Payments[Payment Type] = "Credit card"), [Payment Value])
+		formatString: 0.0%
+		displayFolder: 4 Payments
+
+	measure 'Installment Penetration' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(Payments), Payments[Payment Type] = "Credit card", Payments[Installments] > 1),
+			    CALCULATE(COUNTROWS(Payments), Payments[Payment Type] = "Credit card")
+			)
+		formatString: 0.0%
+		displayFolder: 4 Payments
+
+	measure 'Installment Spend Multiple' =
+			DIVIDE(
+			    CALCULATE([Avg Payment Value], Payments[Payment Type] = "Credit card", Payments[Installments] > 1),
+			    CALCULATE([Avg Payment Value], Payments[Payment Type] = "Credit card", Payments[Installments] = 1)
+			)
+		formatString: 0.00
+		displayFolder: 4 Payments
+
+	measure 'Delivered with Date' = CALCULATE(COUNTROWS(Orders), NOT ISBLANK(Orders[Delivered to Customer]))
+		formatString: #,##0
+		displayFolder: 5 Delivery
+
+	measure 'Late Orders' = CALCULATE(COUNTROWS(Orders), Orders[Is Late] = 1)
+		formatString: #,##0
+		displayFolder: 5 Delivery
+
+	measure 'Late Rate' = DIVIDE([Late Orders], [Delivered with Date])
+		formatString: 0.0%
+		displayFolder: 5 Delivery
+
+	measure 'On-Time Rate' = 1 - [Late Rate]
+		formatString: 0.0%
+		displayFolder: 5 Delivery
+
+	measure 'Avg Delivery Days' = CALCULATE(AVERAGE(Orders[Delivery Days]), NOT ISBLANK(Orders[Delivered to Customer]))
+		formatString: 0.0
+		displayFolder: 5 Delivery
+
+	measure 'Avg Delay Days' = CALCULATE(AVERAGE(Orders[Delay Days]), Orders[Is Late] = 1)
+		formatString: 0.0
+		displayFolder: 5 Delivery
+
+	measure 'Late Review Score' = CALCULATE(AVERAGE(Reviews[Review Score]), Orders[Is Late] = 1)
+		formatString: 0.00
+		displayFolder: 5 Delivery
+
+	measure 'On-Time Review Score' = CALCULATE(AVERAGE(Reviews[Review Score]), Orders[Is Late] = 0)
+		formatString: 0.00
+		displayFolder: 5 Delivery
+
+	measure 'Data Through' = FORMAT(MAX(Orders[Purchase Date]), "dd mmm yyyy")
+		displayFolder: 9 Utility
+
+	partition _Measures = m
+		mode: import
+		source = #table(type table [Placeholder = text], {})

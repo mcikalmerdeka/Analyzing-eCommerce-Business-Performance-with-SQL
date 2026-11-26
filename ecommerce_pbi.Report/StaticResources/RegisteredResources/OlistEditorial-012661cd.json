@@ -1,0 +1,108 @@
+{
+  "name": "OlistEditorial-012661cd.json",
+  "dataColors": [
+    "#B45309",
+    "#0F766E",
+    "#3730A3",
+    "#6B21A8",
+    "#4D7C0F",
+    "#0E7490",
+    "#B91C1C",
+    "#78716C",
+    "#A16207",
+    "#115E59",
+    "#4338CA",
+    "#86198F",
+    "#3F6212",
+    "#155E75",
+    "#DC2626",
+    "#A8A29E"
+  ],
+  "good": "#15803D",
+  "neutral": "#B45309",
+  "bad": "#B91C1C",
+  "maximum": "#B45309",
+  "center": "#D6D3D1",
+  "minimum": "#FDF0E1",
+  "null": "#D6D3D1",
+  "foreground": "#1F1B16",
+  "background": "#FFFFFF",
+  "tableAccent": "#B45309",
+  "textClasses": {
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 30, "color": "#1F1B16" },
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 11, "color": "#1F1B16" },
+    "largeTitle": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#1F1B16" },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 11, "color": "#1F1B16" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 9, "color": "#1F1B16" },
+    "semiboldLabel": { "fontFace": "Segoe UI Semibold", "fontSize": 9, "color": "#1F1B16" },
+    "largeLabel": { "fontFace": "Segoe UI Semibold", "fontSize": 11, "color": "#1F1B16" },
+    "smallLabel": { "fontFace": "Segoe UI", "fontSize": 8, "color": "#6B6257" },
+    "lightLabel": { "fontFace": "Segoe UI", "fontSize": 9, "color": "#6B6257" },
+    "boldLabel": { "fontFace": "Segoe UI Semibold", "fontSize": 9, "color": "#1F1B16" },
+    "largeLightLabel": { "fontFace": "Segoe UI", "fontSize": 10, "color": "#6B6257" },
+    "smallLightLabel": { "fontFace": "Segoe UI", "fontSize": 8, "color": "#6B6257" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
+        ],
+        "border": [{ "show": false }],
+        "dropShadow": [{ "show": false }],
+        "visualHeader": [{ "show": false }],
+        "title": [
+          {
+            "show": true,
+            "fontFamily": "'Segoe UI Semibold'",
+            "fontSize": 11,
+            "fontColor": { "solid": { "color": "#1F1B16" } },
+            "alignment": "left"
+          }
+        ],
+        "subTitle": [
+          {
+            "show": true,
+            "fontFamily": "'Segoe UI'",
+            "fontSize": 8,
+            "fontColor": { "solid": { "color": "#6B6257" } }
+          }
+        ],
+        "padding": [
+          { "top": 10, "bottom": 10, "left": 12, "right": 12 }
+        ]
+      }
+    },
+    "textbox": {
+      "*": {
+        "background": [{ "show": false }],
+        "border": [{ "show": false }],
+        "padding": [
+          { "top": 0, "bottom": 0, "left": 0, "right": 0 }
+        ]
+      }
+    },
+    "cardVisual": {
+      "*": {
+        "background": [
+          { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
+        ],
+        "border": [{ "show": false }],
+        "value": [
+          {
+            "fontFamily": "'Segoe UI Semibold'",
+            "fontSize": 30,
+            "fontColor": { "solid": { "color": "#1F1B16" } }
+          }
+        ],
+        "label": [
+          {
+            "fontFamily": "'Segoe UI'",
+            "fontSize": 9,
+            "fontColor": { "solid": { "color": "#6B6257" } }
+          }
+        ]
+      }
+    }
+  }
+}

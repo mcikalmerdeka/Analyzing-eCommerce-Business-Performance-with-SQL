@@ -1,0 +1,47 @@
+relationship Orders_to_Date
+	crossFilteringBehavior: oneDirection
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Orders'.'Purchase Date'
+	toColumn: 'Date'.'Date'
+
+relationship Orders_to_Customers
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Orders'.'Customer Unique ID'
+	toColumn: 'Customers'.'Customer Unique ID'
+
+relationship OrderItems_to_Orders
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Order Items'.'Order ID'
+	toColumn: 'Orders'.'Order ID'
+
+relationship Payments_to_Orders
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Payments'.'Order ID'
+	toColumn: 'Orders'.'Order ID'
+
+relationship Reviews_to_Orders
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	toCardinality: one
+	fromColumn: 'Reviews'.'Order ID'
+	toColumn: 'Orders'.'Order ID'
+
+relationship OrderItems_to_Products
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Order Items'.'Product ID'
+	toColumn: 'Products'.'Product ID'
+
+relationship OrderItems_to_Sellers
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Order Items'.'Seller ID'
+	toColumn: 'Sellers'.'Seller ID'
+
+relationship Products_to_ProductCategory
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Products'.'Category Key'
+	toColumn: 'Product Category'.'Category Key'
+
+relationship Customers_to_Geography
+	crossFilteringBehavior: oneDirection
+	fromColumn: 'Customers'.'State Code'
+	toColumn: 'Geography'.'State Code'
