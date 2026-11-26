@@ -2,7 +2,7 @@
 
 **eCommerce business performance · five-page Power BI dashboard · September 2016 – August 2018**
 
-![Project Header](assets/Project%20Header.jpg)
+![Project Header](Assets/Project%20Header.jpg)
 
 This repository turns 99,421 raw Olist marketplace orders into a five-page Power BI report. It covers the full path from data repair to a star-schema semantic model, 54 explicit DAX measures and an editorial report designed at 1920×1080.
 
@@ -48,7 +48,7 @@ The design language is an **editorial newsroom**: warm cream paper, white cards,
 
 **R$15.4M in 23 months — growth plateaued at ~R$1M a month**
 
-<a href="assets/powerbi/01-overview.png"><img src="assets/powerbi/01-overview.png" alt="Overview page: R$15.4M delivered revenue, monthly revenue trend, top states, payment mix and top categories" width="100%"></a>
+<a href="Assets/powerbi/01-overview.png"><img src="Assets/powerbi/01-overview.png" alt="Overview page: R$15.4M delivered revenue, monthly revenue trend, top states, payment mix and top categories" width="100%"></a>
 
 - Revenue reached **R$15.42M** across 96,478 delivered orders, at an average order value of **R$159.83**.
 - Monthly revenue climbed to a **November 2017 peak** and then flattened near **R$1M a month**. The 3-month average makes the plateau clear.
@@ -61,7 +61,7 @@ The design language is an **editorial newsroom**: warm cream paper, white cards,
 
 **96.9% of buyers never place a second order**
 
-<a href="assets/powerbi/02-customers.png"><img src="assets/powerbi/02-customers.png" alt="Customers page: 96.9% of buyers never place a second order, active buyers versus new buyers, and lifetime order frequency" width="100%"></a>
+<a href="Assets/powerbi/02-customers.png"><img src="Assets/powerbi/02-customers.png" alt="Customers page: 96.9% of buyers never place a second order, active buyers versus new buyers, and lifetime order frequency" width="100%"></a>
 
 - The report covers **96,090 unique buyers**. Only **2,987** ever place a second order — a **3.11% lifetime repeat rate**.
 - **93,103 buyers place exactly one order**. The tail is thin: 2,739 place two, 199 place three, 30 place four and 19 place five or more.
@@ -74,7 +74,7 @@ The design language is an **editorial newsroom**: warm cream paper, white cards,
 
 **Health & beauty is the R$867K engine — bed & bath drags satisfaction**
 
-<a href="assets/powerbi/03-products.png"><img src="assets/powerbi/03-products.png" alt="Products page: top categories by revenue, revenue versus review score, and category quality table" width="100%"></a>
+<a href="Assets/powerbi/03-products.png"><img src="Assets/powerbi/03-products.png" alt="Products page: top categories by revenue, revenue versus review score, and category quality table" width="100%"></a>
 
 - In 2018 YTD, **health & beauty** generates **R$866,810** — **10.3%** of delivered category revenue. Watches & gifts (R$749,738, 8.9%) and bed, bath & table (R$643,653, 7.6%) follow.
 - The **top three categories account for 26.7%** of 2018 YTD revenue. Revenue is concentrated, but not overwhelmingly so.
@@ -87,7 +87,7 @@ The design language is an **editorial newsroom**: warm cream paper, white cards,
 
 **Credit cards carry 78% of value; boleto still owns one in five orders**
 
-<a href="assets/powerbi/04-payments.png"><img src="assets/powerbi/04-payments.png" alt="Payments page: payment value mix, monthly payment value by type, installment spend and payment detail" width="100%"></a>
+<a href="Assets/powerbi/04-payments.png"><img src="Assets/powerbi/04-payments.png" alt="Payments page: payment value mix, monthly payment value by type, installment spend and payment detail" width="100%"></a>
 
 - **R$8.69M** of payment value moves through the platform in 2018 YTD.
 - **Credit cards are 78.9% of value** and **74.9% of payment records**. Boleto is **16.8% of value** and about **one in five payment records** (18.2%).
@@ -100,7 +100,7 @@ The design language is an **editorial newsroom**: warm cream paper, white cards,
 
 **Late deliveries rose to 9.4% — and they score 2.58★ vs 4.30★**
 
-<a href="assets/powerbi/05-delivery.png"><img src="assets/powerbi/05-delivery.png" alt="Delivery page: late rate and delivery time by month, late rate by state, delivery-time distribution and review score by lateness" width="100%"></a>
+<a href="Assets/powerbi/05-delivery.png"><img src="Assets/powerbi/05-delivery.png" alt="Delivery page: late rate and delivery time by month, late rate by state, delivery-time distribution and review score by lateness" width="100%"></a>
 
 - **9.37% of 2018 YTD deliveries arrive late**, up from **8.11% across the full window**. That is **4,945 late orders** in 2018.
 - Average delivery time is **12.1 days**; when an order is late, it is late by **8.2 days** on average.
@@ -185,7 +185,7 @@ ecommerce_pbi.pbip              open this in Power BI Desktop
 ecommerce_pbi.SemanticModel/    TMDL star schema, relationships, 54 measures
 ecommerce_pbi.Report/           PBIR pages, visuals, theme
 scripts/pbip/                   deterministic Node generator for pages and visuals
-assets/powerbi/                 final screenshots of the five pages
+Assets/powerbi/                 final screenshots of the five pages
 data/                           source CSV files
 ```
 
